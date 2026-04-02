@@ -9,6 +9,9 @@ import Testimonials from '../components/Testimonials'
 import Booking from '../components/Booking'
 import Footer from '../components/Footer'
 import WhatsAppButton from '../components/WhatsAppButton'
+import StickyBookBar from '../components/StickyBookBar'
+import BackToTop from '../components/BackToTop'
+import ToastContainer from '../components/Toast'
 
 export default function HomePage() {
   return (
@@ -24,6 +27,9 @@ export default function HomePage() {
       <Booking />
       <Footer />
       <WhatsAppButton />
+      <StickyBookBar />
+      <BackToTop />
+      <ToastContainer />
     </div>
   )
 }

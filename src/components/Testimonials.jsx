@@ -29,7 +29,7 @@ const reviews = [
   {
     name: 'Khalid Al-Rashidi',
     country: 'Saudi Arabia',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80',
+    avatar: 'https://images.unsplash.com/photo-1566753323558-f4e0952af115?w=200&q=80',
     rating: 5,
     text: 'I was hosting my business guests and the villa exceeded all expectations. The butler service was impeccable, the cinema room was a hit, and the concierge arranged Burj Khalifa access and a private DIFC dinner. Truly the finest in Dubai.',
     stay: 'Stayed 3 nights · Corporate Retreat',

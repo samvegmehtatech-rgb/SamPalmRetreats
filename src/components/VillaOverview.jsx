@@ -1,13 +1,14 @@
 import { Bed, Bath, Users, Waves, Car, Wifi } from 'lucide-react'
 import FadeIn from './FadeIn'
+import CountUp from './CountUp'
 
 const highlights = [
-  { icon: Bed,   value: '6',        label: 'Master Bedrooms'  },
-  { icon: Bath,  value: '7',        label: 'Luxury Bathrooms' },
-  { icon: Users, value: '12',       label: 'Max Guests'       },
-  { icon: Waves, value: 'Private',  label: 'Infinity Pool'    },
-  { icon: Car,   value: '4',        label: 'Parking Spaces'   },
-  { icon: Wifi,  value: '1 Gbps',   label: 'Fiber Internet'   },
+  { icon: Bed,   count: 6,    suffix: '',      label: 'Master Bedrooms'  },
+  { icon: Bath,  count: 7,    suffix: '',      label: 'Luxury Bathrooms' },
+  { icon: Users, count: 12,   suffix: '',      label: 'Max Guests'       },
+  { icon: Waves, count: null, display: 'Pool', label: 'Infinity Pool'    },
+  { icon: Car,   count: 4,    suffix: '',      label: 'Parking Spaces'   },
+  { icon: Wifi,  count: 1,    suffix: ' Gbps', label: 'Fiber Internet'   },
 ]
 
 export default function VillaOverview() {
@@ -75,7 +76,7 @@ export default function VillaOverview() {
 
         {/* Highlights grid */}
         <div className="mt-20 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {highlights.map(({ icon: Icon, value, label }, i) => (
+          {highlights.map(({ icon: Icon, count, suffix, display, label }, i) => (
             <FadeIn key={label} delay={i * 80}>
             <div
               className="glass-light rounded-2xl p-5 text-center gold-border hover:border-gold-400/60 transition-all duration-300 group"
@@ -83,7 +84,11 @@ export default function VillaOverview() {
               <div className="w-10 h-10 gold-gradient-bg rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-lg shadow-gold-400/20">
                 <Icon size={18} className="text-navy-900" />
               </div>
-              <p className="gold-text font-serif text-xl font-semibold">{value}</p>
+              <p className="gold-text font-serif text-xl font-semibold">
+                {count !== null
+                  ? <CountUp end={count} suffix={suffix} duration={1600} />
+                  : display}
+              </p>
               <p className="text-white/40 text-xs tracking-wider uppercase mt-1">{label}</p>
             </div>
             </FadeIn>

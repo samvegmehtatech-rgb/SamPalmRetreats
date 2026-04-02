@@ -8,10 +8,15 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase'
 import { sendConfirmationEmail } from '../lib/sendConfirmationEmail'
 import { track } from '../firebase'
+import { showToast } from '../components/Toast'
+import AvailabilityCalendar from '../components/AvailabilityCalendar'
+import { useBookedDates } from '../hooks/useBookedDates'
 import villas from '../data/villas'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import WhatsAppButton from '../components/WhatsAppButton'
+import ToastContainer from '../components/Toast'
+import BackToTop from '../components/BackToTop'
 
 const packages = [
   { id: 'standard', label: 'Standard Stay',   price: 0,     desc: 'Villa + Butler + Chef Breakfast' },
@@ -31,6 +36,7 @@ export default function BookingPage() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const { blockedDates } = useBookedDates()
 
   if (!villa) {
     return (
@@ -69,10 +75,12 @@ export default function BookingPage() {
       })
       await sendConfirmationEmail({ ...form, pkg: selectedPkg?.label || form.pkg })
       track('booking_submitted', { villa: villa.name, package: selectedPkg?.label, nights: n })
+      showToast('Reservation received! We\'ll contact you within 2 hours.')
       setSubmitted(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
       setError('Something went wrong. Please try again.')
+      showToast('Something went wrong. Please try again.', 'error')
     } finally {
       setLoading(false)
     }
@@ -248,58 +256,49 @@ export default function BookingPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
 
                   {/* Dates & Guests */}
-                  <div className="glass rounded-2xl p-6 gold-border">
-                    <h3 className="text-white/60 text-xs tracking-[0.25em] uppercase font-medium mb-4">Stay Details</h3>
-                    <div className="grid sm:grid-cols-3 gap-4">
-                      <div>
-                        <label className="text-white/40 text-xs tracking-wider uppercase block mb-2">Check-in Date</label>
-                        <div className="relative">
-                          <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400" />
-                          <input
-                            type="date"
-                            name="checkin"
-                            required
-                            value={form.checkin}
-                            onChange={handleChange}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-8 pr-3 py-3 text-white text-sm focus:outline-none focus:border-gold-400/60 transition-colors"
-                          />
+                  <div className="space-y-4">
+                    <AvailabilityCalendar
+                      blockedDates={blockedDates}
+                      checkin={form.checkin}
+                      checkout={form.checkout}
+                      onChange={({ checkin, checkout }) => setForm((f) => ({ ...f, checkin, checkout }))}
+                    />
+
+                    {/* Selected dates summary + guests */}
+                    <div className="glass rounded-2xl p-5 gold-border">
+                      <h3 className="text-white/60 text-xs tracking-[0.25em] uppercase font-medium mb-4">Stay Summary</h3>
+                      <div className="grid sm:grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-white/40 text-xs tracking-wider uppercase mb-1">Check-in</p>
+                          <p className={`text-sm font-semibold ${form.checkin ? 'text-gold-400' : 'text-white/20'}`}>
+                            {form.checkin || 'Not selected'}
+                          </p>
                         </div>
-                      </div>
-                      <div>
-                        <label className="text-white/40 text-xs tracking-wider uppercase block mb-2">Check-out Date</label>
-                        <div className="relative">
-                          <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400" />
-                          <input
-                            type="date"
-                            name="checkout"
-                            required
-                            value={form.checkout}
-                            onChange={handleChange}
-                            min={form.checkin || new Date().toISOString().split('T')[0]}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-8 pr-3 py-3 text-white text-sm focus:outline-none focus:border-gold-400/60 transition-colors"
-                          />
+                        <div>
+                          <p className="text-white/40 text-xs tracking-wider uppercase mb-1">Check-out</p>
+                          <p className={`text-sm font-semibold ${form.checkout ? 'text-gold-400' : 'text-white/20'}`}>
+                            {form.checkout || 'Not selected'}
+                          </p>
                         </div>
-                      </div>
-                      <div>
-                        <label className="text-white/40 text-xs tracking-wider uppercase block mb-2">
-                          No. of Guests
-                          <span className="text-white/25 ml-1">(max {villa.maxGuests})</span>
-                        </label>
-                        <div className="relative">
-                          <Users size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400" />
-                          <select
-                            name="guests"
-                            value={form.guests}
-                            onChange={handleChange}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-8 pr-3 py-3 text-white text-sm focus:outline-none focus:border-gold-400/60 transition-colors appearance-none"
-                          >
-                            {[...Array(villa.maxGuests)].map((_, i) => (
-                              <option key={i + 1} value={i + 1} className="bg-navy-800">
-                                {i + 1} {i === 0 ? 'Guest' : 'Guests'}
-                              </option>
-                            ))}
-                          </select>
+                        <div>
+                          <label className="text-white/40 text-xs tracking-wider uppercase block mb-2">
+                            Guests <span className="text-white/25">(max {villa.maxGuests})</span>
+                          </label>
+                          <div className="relative">
+                            <Users size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400" />
+                            <select
+                              name="guests"
+                              value={form.guests}
+                              onChange={handleChange}
+                              className="w-full bg-white/5 border border-white/10 rounded-xl pl-8 pr-3 py-2.5 text-white text-sm focus:outline-none focus:border-gold-400/60 transition-colors appearance-none"
+                            >
+                              {[...Array(villa.maxGuests)].map((_, i) => (
+                                <option key={i + 1} value={i + 1} className="bg-navy-800">
+                                  {i + 1} {i === 0 ? 'Guest' : 'Guests'}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -421,6 +420,8 @@ export default function BookingPage() {
 
       <Footer />
       <WhatsAppButton />
+      <BackToTop />
+      <ToastContainer />
     </div>
   )
 }

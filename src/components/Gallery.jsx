@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { X, ZoomIn } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react'
+import LazyImage from './LazyImage'
 
 const images = [
   {
@@ -41,7 +42,33 @@ const images = [
 ]
 
 export default function Gallery() {
-  const [lightbox, setLightbox] = useState(null)
+  const [lightboxIdx, setLightboxIdx] = useState(null)
+  const touchStartX = useRef(null)
+
+  const prev = () => setLightboxIdx((i) => (i - 1 + images.length) % images.length)
+  const next = () => setLightboxIdx((i) => (i + 1) % images.length)
+  const close = () => setLightboxIdx(null)
+
+  useEffect(() => {
+    if (lightboxIdx === null) return
+    const onKey = (e) => {
+      if (e.key === 'ArrowLeft')  prev()
+      if (e.key === 'ArrowRight') next()
+      if (e.key === 'Escape')     close()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [lightboxIdx])
+
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
+  const onTouchEnd   = (e) => {
+    if (touchStartX.current === null) return
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 50) diff > 0 ? next() : prev()
+    touchStartX.current = null
+  }
+
+  const lightbox = lightboxIdx !== null ? images[lightboxIdx] : null
 
   return (
     <section id="gallery" className="bg-navy-800 py-24 lg:py-32">
@@ -67,9 +94,9 @@ export default function Gallery() {
             <div
               key={i}
               className={`relative overflow-hidden rounded-2xl cursor-pointer group ${img.span}`}
-              onClick={() => setLightbox(img)}
+              onClick={() => setLightboxIdx(i)}
             >
-              <img
+              <LazyImage
                 src={img.src}
                 alt={img.alt}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -92,24 +119,45 @@ export default function Gallery() {
       {/* Lightbox */}
       {lightbox && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setLightbox(null)}
+          className="fixed inset-0 z-50 bg-black/92 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={close}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
         >
+          {/* Close */}
           <button
-            className="absolute top-6 right-6 text-white/60 hover:text-white bg-white/10 rounded-full p-2 transition-colors"
-            onClick={() => setLightbox(null)}
+            className="absolute top-6 right-6 text-white/60 hover:text-white bg-white/10 rounded-full p-2 transition-colors z-10"
+            onClick={close}
           >
             <X size={22} />
           </button>
+
+          {/* Prev */}
+          <button
+            className="absolute left-4 md:left-8 text-white/60 hover:text-gold-400 bg-white/10 hover:bg-white/20 rounded-full p-3 transition-all z-10"
+            onClick={(e) => { e.stopPropagation(); prev() }}
+          >
+            <ChevronLeft size={24} />
+          </button>
+
+          {/* Next */}
+          <button
+            className="absolute right-4 md:right-8 text-white/60 hover:text-gold-400 bg-white/10 hover:bg-white/20 rounded-full p-3 transition-all z-10"
+            onClick={(e) => { e.stopPropagation(); next() }}
+          >
+            <ChevronRight size={24} />
+          </button>
+
           <div className="max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
             <img
               src={lightbox.src}
               alt={lightbox.alt}
               className="w-full max-h-[80vh] object-contain rounded-xl"
             />
-            <p className="text-gold-400 text-center mt-4 text-sm tracking-wider uppercase font-medium">
-              {lightbox.label}
-            </p>
+            <div className="flex items-center justify-between mt-4 px-2">
+              <p className="text-gold-400 text-sm tracking-wider uppercase font-medium">{lightbox.label}</p>
+              <p className="text-white/30 text-xs">{lightboxIdx + 1} / {images.length}</p>
+            </div>
           </div>
         </div>
       )}

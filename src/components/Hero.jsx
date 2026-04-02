@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ChevronDown, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import CountUp from './CountUp'
 
 export default function Hero() {
   const [loaded, setLoaded] = useState(false)
@@ -12,15 +13,25 @@ export default function Hero() {
 
   return (
     <section className="relative w-full h-screen min-h-[700px] flex items-end overflow-hidden">
-      {/* Background Image */}
+      {/* Background Video */}
       <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1920&q=90"
-          alt="Palm Island Dubai Villa"
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1920&q=90"
           className="w-full h-full object-cover object-center"
-        />
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+          {/* Fallback image if video not found */}
+          <img
+            src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1920&q=90"
+            alt="Palm Island Dubai Villa"
+            className="w-full h-full object-cover object-center"
+          />
+        </video>
         <div className="absolute inset-0 dark-overlay" />
-        {/* Subtle gold vignette */}
         <div className="absolute inset-0 bg-gradient-to-r from-navy-900/80 via-transparent to-transparent" />
       </div>
 
@@ -81,13 +92,17 @@ export default function Hero() {
           }`}
         >
           {[
-            { value: '6', label: 'Bedrooms' },
-            { value: '850m²', label: 'Living Space' },
-            { value: '∞', label: 'Gulf View' },
-            { value: '24/7', label: 'Butler Service' },
+            { count: 6,   suffix: '',    display: null, label: 'Bedrooms'       },
+            { count: 850, suffix: 'm²',  display: null, label: 'Living Space'   },
+            { count: null,suffix: '',    display: '∞',  label: 'Gulf View'      },
+            { count: null,suffix: '',    display: '24/7',label: 'Butler Service' },
           ].map((stat) => (
             <div key={stat.label} className="border-l border-gold-400/30 pl-4 md:pl-6">
-              <p className="gold-text font-serif text-2xl md:text-3xl font-semibold">{stat.value}</p>
+              <p className="gold-text font-serif text-2xl md:text-3xl font-semibold">
+                {stat.count !== null
+                  ? <CountUp end={stat.count} suffix={stat.suffix} duration={2000} />
+                  : stat.display}
+              </p>
               <p className="text-white/40 text-xs md:text-sm tracking-widest uppercase mt-0.5">{stat.label}</p>
             </div>
           ))}

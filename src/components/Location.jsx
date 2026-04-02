@@ -1,5 +1,6 @@
 import { MapPin, Plane, Car, Ship } from 'lucide-react'
 import FadeIn from './FadeIn'
+import { useParallax } from '../hooks/useParallax'
 
 const distances = [
   { icon: Plane, label: 'Dubai International Airport', time: '25 min',  sub: 'by Rolls-Royce'      },
@@ -9,6 +10,8 @@ const distances = [
 ]
 
 export default function Location() {
+  const parallaxRef = useParallax(0.5)
+
   return (
     <section className="bg-navy-900 py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
@@ -37,14 +40,14 @@ export default function Location() {
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           {/* Map placeholder / Aerial image */}
           <FadeIn variant="fade-left" className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-2xl shadow-black/60">
-            <img
-              src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=900&q=85"
-              alt="Dubai aerial view"
-              className="w-full h-full object-cover"
+            <div
+              ref={parallaxRef}
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=900&q=85)', backgroundSize: 'cover' }}
             />
-            <div className="absolute inset-0 bg-navy-900/20" />
+            <div className="absolute inset-0 bg-navy-900/20 z-10" />
             {/* Pin */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-20">
               <div className="bg-gold-400 text-navy-900 text-xs font-bold px-4 py-2 rounded-full shadow-xl animate-float">
                 Villa Al Nakheel
               </div>

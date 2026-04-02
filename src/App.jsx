@@ -1,5 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import LoadingScreen from './components/LoadingScreen'
+import CustomCursor from './components/CustomCursor'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import HomePage from './pages/HomePage'
@@ -8,6 +10,14 @@ import BookingPage from './pages/BookingPage'
 import AdminPage from './pages/AdminPage'
 import AdminLoginPage from './pages/AdminLoginPage'
 import { track } from './firebase'
+
+function ScrollToTop() {
+  const location = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+  return null
+}
 
 function PageTracker() {
   const location = useLocation()
@@ -18,9 +28,14 @@ function PageTracker() {
 }
 
 export default function App() {
+  const [loading, setLoading] = useState(true)
+
   return (
     <AuthProvider>
+      <CustomCursor />
+      {loading && <LoadingScreen onDone={() => setLoading(false)} />}
       <BrowserRouter>
+        <ScrollToTop />
         <PageTracker />
         <Routes>
           <Route path="/" element={<HomePage />} />

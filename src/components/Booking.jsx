@@ -4,7 +4,10 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase'
 import { sendConfirmationEmail } from '../lib/sendConfirmationEmail'
 import { track } from '../firebase'
+import { showToast } from './Toast'
 import FadeIn from './FadeIn'
+import AvailabilityCalendar from './AvailabilityCalendar'
+import { useBookedDates } from '../hooks/useBookedDates'
 
 const packages = [
   { id: 'standard', label: 'Standard Stay', price: 'AED 18,500', desc: 'Villa + Butler + Chef Breakfast' },
@@ -20,6 +23,7 @@ export default function Booking() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const { blockedDates } = useBookedDates()
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -35,9 +39,11 @@ export default function Booking() {
       const selectedPkg = packages.find((p) => p.id === form.pkg)
       await sendConfirmationEmail({ ...form, pkg: selectedPkg?.label || form.pkg })
       track('booking_submitted', { package: selectedPkg?.label })
+      showToast('Reservation received! We\'ll contact you within 2 hours.')
       setSubmitted(true)
     } catch (err) {
       setError('Something went wrong. Please try again.')
+      showToast('Something went wrong. Please try again.', 'error')
     } finally {
       setLoading(false)
     }
@@ -138,35 +144,29 @@ export default function Booking() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 md:p-10 gold-border">
-                {/* Dates + guests */}
+                {/* Availability Calendar */}
+                <div className="mb-6">
+                  <AvailabilityCalendar
+                    blockedDates={blockedDates}
+                    checkin={form.checkin}
+                    checkout={form.checkout}
+                    onChange={({ checkin, checkout }) => setForm((f) => ({ ...f, checkin, checkout }))}
+                  />
+                </div>
+
+                {/* Dates summary + guests */}
                 <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                  <div>
-                    <label className="text-white/40 text-xs tracking-wider uppercase block mb-2">Check-in</label>
-                    <div className="relative">
-                      <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400" />
-                      <input
-                        type="date"
-                        name="checkin"
-                        required
-                        value={form.checkin}
-                        onChange={handleChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-3 text-white text-sm focus:outline-none focus:border-gold-400/60 transition-colors"
-                      />
-                    </div>
+                  <div className="glass-light rounded-xl p-3 gold-border">
+                    <p className="text-white/40 text-[10px] tracking-wider uppercase mb-1">Check-in</p>
+                    <p className={`text-sm font-semibold ${form.checkin ? 'text-gold-400' : 'text-white/20'}`}>
+                      {form.checkin || 'Not selected'}
+                    </p>
                   </div>
-                  <div>
-                    <label className="text-white/40 text-xs tracking-wider uppercase block mb-2">Check-out</label>
-                    <div className="relative">
-                      <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400" />
-                      <input
-                        type="date"
-                        name="checkout"
-                        required
-                        value={form.checkout}
-                        onChange={handleChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-3 text-white text-sm focus:outline-none focus:border-gold-400/60 transition-colors"
-                      />
-                    </div>
+                  <div className="glass-light rounded-xl p-3 gold-border">
+                    <p className="text-white/40 text-[10px] tracking-wider uppercase mb-1">Check-out</p>
+                    <p className={`text-sm font-semibold ${form.checkout ? 'text-gold-400' : 'text-white/20'}`}>
+                      {form.checkout || 'Not selected'}
+                    </p>
                   </div>
                   <div>
                     <label className="text-white/40 text-xs tracking-wider uppercase block mb-2">Guests</label>
