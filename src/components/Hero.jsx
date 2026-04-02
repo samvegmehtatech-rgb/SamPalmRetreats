@@ -23,7 +23,7 @@ export default function Hero() {
           poster="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1920&q=90"
           className="w-full h-full object-cover object-center"
         >
-          <source src="/hero-video.mp4" type="video/mp4" />
+          <source src={import.meta.env.VITE_HERO_VIDEO_URL || '/hero-video.mp4'} type="video/mp4" />
           {/* Fallback image if video not found */}
           <img
             src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1920&q=90"
