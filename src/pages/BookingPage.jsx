@@ -76,8 +76,7 @@ export default function BookingPage() {
       await sendConfirmationEmail({ ...form, pkg: selectedPkg?.label || form.pkg })
       track('booking_submitted', { villa: villa.name, package: selectedPkg?.label, nights: n })
       showToast('Reservation received! We\'ll contact you within 2 hours.')
-      setSubmitted(true)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      navigate('/booking-confirmation', { state: { villa, form, nights: n, pkg: selectedPkg } })
     } catch (err) {
       setError('Something went wrong. Please try again.')
       showToast('Something went wrong. Please try again.', 'error')

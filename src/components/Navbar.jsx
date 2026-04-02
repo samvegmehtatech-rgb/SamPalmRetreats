@@ -47,6 +47,12 @@ export default function Navbar() {
           >
             Villas
           </Link>
+          <Link
+            to="/contact"
+            className="text-white/70 hover:text-gold-400 text-sm tracking-wide transition-colors duration-300 font-light"
+          >
+            Contact
+          </Link>
           {navLinks.map((l) => (
             <a
               key={l.label}
@@ -101,6 +107,13 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
+          <Link
+            to="/contact"
+            className="text-white/80 hover:text-gold-400 text-base tracking-wide transition-colors"
+            onClick={() => setMenuOpen(false)}
+          >
+            Contact
+          </Link>
           <Link
             to="/villas"
             className="gold-gradient-bg text-navy-900 font-semibold text-sm px-6 py-3 rounded-full text-center mt-2"
