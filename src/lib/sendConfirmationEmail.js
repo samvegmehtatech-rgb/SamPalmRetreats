@@ -16,9 +16,9 @@ export async function sendConfirmationEmail({ name, email, checkin, checkout, gu
       SERVICE_ID,
       TEMPLATE_ID,
       {
-        to_email:   email,
-        guest_name: name,
-        package:    pkg,
+        to_email: email,
+        name:     name,
+        pkg:      pkg,
         checkin,
         checkout,
         guests,
