@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 // Simple inline SVG social icons (brand icons removed from lucide-react)
 const InstagramIcon = () => (
@@ -17,10 +18,25 @@ const YoutubeIcon = () => (
   </svg>
 )
 
-const links = {
-  Villa: ['The Villa', 'Gallery', 'Amenities', 'Rooms & Suites', 'Private Beach'],
-  Experience: ['Dining', 'Spa & Wellness', 'Yacht Charter', 'City Experiences', 'Concierge'],
-  Reservations: ['Book Now', 'Packages', 'Gift Vouchers', 'Corporate Retreats', 'FAQs'],
+const navLinks = {
+  Villa: [
+    { label: 'All Villas', to: '/villas' },
+    { label: 'Gallery', to: '/#gallery' },
+    { label: 'Amenities', to: '/#amenities' },
+    { label: 'Our Experience', to: '/#experience' },
+  ],
+  Experience: [
+    { label: 'Experiences & Add-ons', to: '/experiences' },
+    { label: 'Pricing & Seasons', to: '/pricing' },
+    { label: 'Guest Reviews', to: '/#reviews' },
+    { label: 'Contact Us', to: '/contact' },
+  ],
+  Reservations: [
+    { label: 'Book Now', to: '/villas' },
+    { label: 'Pricing', to: '/pricing' },
+    { label: 'Add-ons', to: '/experiences' },
+    { label: 'Contact', to: '/contact' },
+  ],
 }
 
 export default function Footer() {
@@ -77,15 +93,15 @@ export default function Footer() {
           </div>
 
           {/* Nav links */}
-          {Object.entries(links).map(([category, items]) => (
+          {Object.entries(navLinks).map(([category, items]) => (
             <div key={category}>
               <h4 className="text-gold-400 text-xs tracking-[0.25em] uppercase font-medium mb-5">{category}</h4>
               <ul className="flex flex-col gap-3">
-                {items.map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-white/40 hover:text-white/80 text-sm transition-colors font-light">
-                      {item}
-                    </a>
+                {items.map(({ label, to }) => (
+                  <li key={label}>
+                    <Link to={to} className="text-white/40 hover:text-white/80 text-sm transition-colors font-light">
+                      {label}
+                    </Link>
                   </li>
                 ))}
               </ul>

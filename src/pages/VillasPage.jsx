@@ -168,14 +168,23 @@ function VillaCard({ villa }) {
           <span>Parking: <span className="text-white/60">{villa.parking} cars</span></span>
         </div>
 
-        {/* Book button */}
-        <Link
-          to={`/book/${villa.id}`}
-          className="w-full gold-gradient-bg text-navy-900 font-semibold py-3.5 rounded-xl text-sm hover:opacity-90 hover:scale-[1.02] transition-all shadow-lg shadow-gold-400/20 flex items-center justify-center gap-2"
-        >
-          Book This Villa
-          <ArrowRight size={15} />
-        </Link>
+        {/* CTA buttons */}
+        <div className="flex gap-2">
+          <Link
+            to={`/villas/${villa.id}`}
+            className="flex-1 gold-gradient-bg text-navy-900 font-semibold py-3.5 rounded-xl text-sm hover:opacity-90 hover:scale-[1.02] transition-all shadow-lg shadow-gold-400/20 flex items-center justify-center gap-2"
+          >
+            View Villa
+            <ArrowRight size={15} />
+          </Link>
+          <Link
+            to={`/book/${villa.id}`}
+            className="border border-gold-400/40 text-gold-400 hover:bg-gold-400/10 px-4 py-3.5 rounded-xl text-sm transition-all flex items-center justify-center"
+            title="Book directly"
+          >
+            Book
+          </Link>
+        </div>
       </div>
     </div>
   )

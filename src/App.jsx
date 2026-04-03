@@ -11,6 +11,9 @@ import AdminPage from './pages/AdminPage'
 import AdminLoginPage from './pages/AdminLoginPage'
 import BookingConfirmationPage from './pages/BookingConfirmationPage'
 import ContactPage from './pages/ContactPage'
+import VillaDetailPage from './pages/VillaDetailPage'
+import PricingPage from './pages/PricingPage'
+import ExperiencesPage from './pages/ExperiencesPage'
 import { track } from './firebase'
 
 function ScrollToTop() {
@@ -42,6 +45,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/villas" element={<VillasPage />} />
+          <Route path="/villas/:villaId" element={<VillaDetailPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/experiences" element={<ExperiencesPage />} />
           <Route path="/book/:villaId" element={<BookingPage />} />
           <Route path="/booking-confirmation" element={<BookingConfirmationPage />} />
           <Route path="/contact" element={<ContactPage />} />

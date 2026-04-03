@@ -48,6 +48,18 @@ export default function Navbar() {
             Villas
           </Link>
           <Link
+            to="/experiences"
+            className="text-white/70 hover:text-gold-400 text-sm tracking-wide transition-colors duration-300 font-light"
+          >
+            Experiences
+          </Link>
+          <Link
+            to="/pricing"
+            className="text-white/70 hover:text-gold-400 text-sm tracking-wide transition-colors duration-300 font-light"
+          >
+            Pricing
+          </Link>
+          <Link
             to="/contact"
             className="text-white/70 hover:text-gold-400 text-sm tracking-wide transition-colors duration-300 font-light"
           >
@@ -96,6 +108,20 @@ export default function Navbar() {
             onClick={() => setMenuOpen(false)}
           >
             Villas
+          </Link>
+          <Link
+            to="/experiences"
+            className="text-white/80 hover:text-gold-400 text-base tracking-wide transition-colors"
+            onClick={() => setMenuOpen(false)}
+          >
+            Experiences
+          </Link>
+          <Link
+            to="/pricing"
+            className="text-white/80 hover:text-gold-400 text-base tracking-wide transition-colors"
+            onClick={() => setMenuOpen(false)}
+          >
+            Pricing
           </Link>
           {navLinks.map((l) => (
             <a
